@@ -27,6 +27,7 @@ const auth = firebase.auth();
 const routing = (
   <Router>
     <div id='routing-container'>
+      <Route path="/" exact component={Login} />
       <Route path='/login' component={Login}></Route>
       <Route path='/home' component={Home}></Route>
     </div>
