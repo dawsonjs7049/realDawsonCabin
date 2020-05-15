@@ -1,0 +1,97 @@
+.container {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(120deg, #58afe9, #3367c9, #032b5f);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Poppins', sans-serif;
+    font-weight: bold;
+}
+
+.login-box {
+    width: 300px;
+    height: 400px;
+    background-color: ghostwhite;
+    border: 2px solid darkslategray;
+    border-radius: 10px;
+}
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    height: 300px;
+    padding: 1rem;
+}
+
+.username-div {
+    margin: 3rem 0 2rem 0;
+}
+
+form {
+    width: 100%;
+}
+
+form div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+input {
+    border: 0;
+    border-bottom: 2px solid lightgray;
+    outline: 0;
+    background-color: ghostwhite;
+    width: 85%;
+    height: 27px;
+    font-size: 20px;;
+    margin-right: .5rem;
+}
+
+input:hover {
+    border-bottom: 2px solid darkcyan;
+}
+
+#password-input{
+    margin-bottom: 1rem;
+}
+
+h2 {
+    text-align: center;
+    margin: 3rem 0 0 0;
+}
+
+.button-div {
+    display: flex;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.button-div button{
+    border: none;
+    background: linear-gradient(120deg, #3498db, #8e44ad, #8e44ad);
+    background-size: 200%;
+    color: #fff;
+    outline: none;
+    cursor: pointer;
+    transition: 0.5s;
+    border-radius: 10px;
+    width: 90%;
+    height: 35px;
+    font-size: 17px;
+}
+
+.button-div button:hover {
+    background-position: right;
+}
+
+.error-div {
+    margin: auto;
+    width: 90%;
+    background-color: red;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    justify-self: center;
+}
