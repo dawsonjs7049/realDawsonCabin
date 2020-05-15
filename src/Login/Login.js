@@ -41,7 +41,7 @@ const Login = (props) => {
     return (
         <div className="container">
             <div className="login-box">
-                <h2>The Pigeon Coop</h2>
+                <h2>The Pigeon Koop</h2>
                 <div className="form-container">
                     <form onSubmit={(e) => submitLogin(e)}>
                         <div className="username-div">

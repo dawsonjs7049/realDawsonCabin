@@ -93,7 +93,7 @@ const Home = (props) => {
     return (
         <div className="home-container">
             <div className="header">
-                <span>The Pigeon Coop</span>
+                <span>The Pigeon Koop</span>
                 <button className="logout-btn" onClick={(e) => logout(e)}>
                     Logout &nbsp; <i class="fas fa-sign-out-alt"></i>
                 </button>
