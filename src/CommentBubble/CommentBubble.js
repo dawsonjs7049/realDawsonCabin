@@ -66,7 +66,7 @@ const CommentBubble = (props) => {
                         </div>
                     </div>
                     <div className="comment-delete-div">
-                        <button className="comment-edit-button" onClick={() => saveComment()}><i class="far fa-save fa-2x"></i></button>
+                        <button className="comment-edit-button" onClick={() => saveComment()}><i class="far fa-save fa-lg"></i></button>
                     </div>
                  </>
             ) : (
@@ -80,8 +80,8 @@ const CommentBubble = (props) => {
                         </div>
                     </div>
                     <div className="comment-delete-div">
-                        <button className="comment-edit-button" onClick={() => editComment()}><i class="far fa-edit fa-2x"></i></button>
-                        <button className="comment-delete-button" onClick={() => deleteComment()}><i class="far fa-trash-alt fa-2x"></i></button>
+                        <button className="comment-edit-button" onClick={() => editComment()}><i class="far fa-edit fa-lg"></i></button>
+                        <button className="comment-delete-button" onClick={() => deleteComment()}><i class="far fa-trash-alt fa-lg"></i></button>
                     </div>
                 </>
             )}
