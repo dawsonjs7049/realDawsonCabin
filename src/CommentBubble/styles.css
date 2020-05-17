@@ -2,7 +2,7 @@
     width: 87.5%;
     background-color: ghostwhite;
     border-radius: 5px;
-    padding: 0 1rem .25rem 1rem;
+    padding: 0 1rem 0 1rem;
     margin-top: 1rem;
     margin-left: auto;
     margin-right: auto;
@@ -15,6 +15,7 @@
 .bubble-comment-div {
     padding-top: 1rem;
     width: 90%;
+    padding-bottom: .25rem;
 }
 
 .bubble-bottom {
@@ -27,7 +28,7 @@
     background-color: red;
     border-radius: 5px;
     border: none;
-    height: 2.5rem;
+    height: 2rem;
 }
 
 .comment-delete-button:hover {
@@ -37,5 +38,35 @@
 .comment-delete-div {
     display: flex;
     align-items: center;
-    width: 7%;
+    width: 6%;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.comment-edit-button {
+    width: 100%;
+    background-color: green;
+    border-radius: 5px;
+    border: none;
+    height: 2rem;
+}
+
+.comment-edit-button:hover {
+    background-color: rgb(0, 70, 0);
+}
+
+.edit-area {
+    width: 100%;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 3px;
+    font-family: 'Poppins', sans-serif;
+    overflow: auto;
+    background-color: ghostwhite;
+}
+
+.edit-area:hover {
+    border-bottom: 2px solid rgb(28, 130, 247);
 }
