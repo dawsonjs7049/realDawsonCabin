@@ -40,19 +40,22 @@ const Comments = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        
+        if(currentComment.length > 0) {
+            let newDate = firebase.firestore.Timestamp.fromDate(new Date())
+
+            const newCommentFromDB = await firebase
+                .firestore()
+                .collection('Comments')
+                .add({
+                    author: props.username,
+                    comment: currentComment,
+                    date: newDate,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+        }
         setCurrentComment("")
 
-        let newDate = firebase.firestore.Timestamp.fromDate(new Date())
-
-        const newCommentFromDB = await firebase
-            .firestore()
-            .collection('Comments')
-            .add({
-                author: props.username,
-                comment: currentComment,
-                date: newDate,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
     }
 
 
