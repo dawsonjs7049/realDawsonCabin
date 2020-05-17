@@ -1,0 +1,46 @@
+.comments-container {
+    padding-top: 2rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.comments-header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.comment-input {
+    background-color: ghostwhite;
+    width: 75%;
+    border-radius: 1px;
+    border: none;
+}
+
+.comment-submit-button {
+    border-radius: 1px;
+    height: 1.8rem;
+    width: 15%;
+    background-color: teal;
+    color: white;
+    font-size: 20px;
+    border: none;
+    cursor: pointer;
+    margin-bottom: .5rem;
+}
+
+.comment-submit-button:hover {
+    background-color: rgb(0, 66, 66);
+}
+
+.comment-h2 {
+    color: ghostwhite;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.comment-h3 {
+    color: ghostwhite;
+    text-align: center;
+    margin: 1rem;
+}

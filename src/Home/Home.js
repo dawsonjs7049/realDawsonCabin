@@ -4,6 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import styles from './styles.css';
+import Comments from "../Comments/Comments";
 
 const firebase = require('firebase');
 
@@ -18,7 +19,6 @@ const Home = (props) => {
     const [showModal, setShowModal] = useState(false)
     const [showCancelModal, setShowCancelModal] = useState(false)
     const [expectedPeople, setExpectedPeople] = useState(null)
-    const [reservations, setReservations] = useState([])
     const [events, setEvents] = useState([])
 
     useEffect(() => {
@@ -238,6 +238,11 @@ const Home = (props) => {
                         marginwidth="0">
                     </iframe>
                 </div>
+            </div>
+            <div className="comments-div">
+                <Comments username={username}>
+                
+                </Comments>
             </div>
             <div className="footer">
                 Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>
