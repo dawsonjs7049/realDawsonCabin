@@ -171,7 +171,7 @@
   .help-modal {
     width: 560px;
     height: 890px;
-    max-height: 90vh;
+    max-height: 95vh;
     border: 2px solid teal;
     background-color: ghostwhite;
     border-radius: 5px;
