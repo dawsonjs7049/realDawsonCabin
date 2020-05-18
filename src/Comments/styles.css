@@ -7,12 +7,12 @@
 .comments-header {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
 }
 
 .comment-input {
     background-color: ghostwhite;
-    width: 75%;
+    width: 85%;
     border-radius: 1px;
     border: none;
 }
@@ -43,4 +43,11 @@
     color: ghostwhite;
     text-align: center;
     margin: 1rem;
+}
+
+.comments-body {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
 }
