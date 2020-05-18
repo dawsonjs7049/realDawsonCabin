@@ -5,6 +5,7 @@
 }
 
 .comments-header {
+    height: 2rem;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -15,11 +16,12 @@
     width: 85%;
     border-radius: 1px;
     border: none;
+    height: 100%;
 }
 
 .comment-submit-button {
     border-radius: 1px;
-    height: 1.8rem;
+    height: 100%;
     width: 15%;
     background-color: teal;
     color: white;
