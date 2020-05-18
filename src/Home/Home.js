@@ -34,8 +34,9 @@ const Home = (props) => {
       
                 let fetchedEvents = reservations.map(reservation => {
                         let date = reservation.reservationDate.toDate()
+                        const month = ("0" + (date.getUTCMonth() + 1))
                         let dateString = date.getUTCFullYear() + "-" + ("0" + (date.getUTCMonth()+1)).slice(-2) + "-" + ("0" + date.getUTCDate()).slice(-2)
-                        return {title: reservation.username + " - " + reservation.numPeople + " total", date: dateString, id: reservation.id, totalPeople: reservation.numPeople}
+                        return {title: reservation.username + " - " + reservation.numPeople + " total", date: dateString, id: reservation.id, totalPeople: reservation.numPeople, month: month}
                     })
                 console.log(fetchedEvents)
                 setEvents(fetchedEvents)
@@ -90,12 +91,27 @@ const Home = (props) => {
             })
     }
 
+    const cancelAllInMonth = () => {
+        const date = new Date()
+        const month = ("0" + (date.getUTCMonth() + 1))
+
+        let eventsInMonth = events.filter(event => event.month === month && event.title.includes(username))
+        
+        eventsInMonth.forEach(event => {
+            firebase
+                .firestore()
+                .collection('reservations')
+                .doc(event.id)
+                .delete();
+        })
+    }
+
     return (
         <div className="home-container">
             <div className="header">
                 <span>The Pigeon Koop</span>
                 <div className="header-buttons-container">
-                    <button className="help-btn" onClick={() => showHelpModal(true)}>
+                    <button className="help-btn" onClick={() => showHelpModal(!helpModal)}>
                         Help
                     </button>
                     <button className="logout-btn" onClick={(e) => logout(e)}>
@@ -116,6 +132,7 @@ const Home = (props) => {
             <div className="home-body">
                 <div className="welcome-div">
                     <h1>Welcome, you are signed in as {username}</h1>
+                    <button className="clear-all-button" onClick={() => cancelAllInMonth()}>Clear All Reservations in Month</button>
                 </div>
                 <div className="calendar-div">
                     <FullCalendar 
@@ -231,6 +248,7 @@ const Home = (props) => {
                         </div>
                     }
                     {helpModal &&
+                    <div className="help-modal-container">
                         <div className="help-modal">
                             <h4 className="help-h4">Weather</h4>
                             <p>You can access more detailed weather forcasts by clicking anywhere on the weather banner</p>
@@ -268,6 +286,8 @@ const Home = (props) => {
 
                             <button className="modal-cancel help-modal-close" onClick={() => showHelpModal(false)}>Close</button>
                         </div>
+                    </div>
+                        
                     }
                 </div>
                 <div className="map-div">
