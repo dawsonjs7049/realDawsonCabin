@@ -169,8 +169,9 @@
 
 
   .help-modal {
-    width: 560px;
-    height: 900px;
+    width: 75vw;
+    max-width: 1400px;
+    max-height: 800px;
     border: 2px solid teal;
     background-color: ghostwhite;
     border-radius: 5px;
