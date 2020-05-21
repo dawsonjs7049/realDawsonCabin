@@ -21,6 +21,8 @@ const Home = (props) => {
     const [events, setEvents] = useState([])
     const [helpModal, showHelpModal] = useState(false)
 
+    let calendarRef = React.createRef()
+
     useEffect(() => {
         firebase
             .firestore()
@@ -92,11 +94,14 @@ const Home = (props) => {
     }
 
     const cancelAllInMonth = () => {
-        const date = new Date()
-        const month = ("0" + (date.getUTCMonth() + 1))
+       
+        let calendarApi = calendarRef.current.getApi()
+
+        const date = calendarApi.view.currentStart;
+        const month = ("0" + (date.getUTCMonth() + 1));
 
         let eventsInMonth = events.filter(event => event.month === month && event.title.includes(username))
-        
+
         eventsInMonth.forEach(event => {
             firebase
                 .firestore()
@@ -136,6 +141,7 @@ const Home = (props) => {
                 </div>
                 <div className="calendar-div">
                     <FullCalendar 
+                        ref={calendarRef}
                         defaultView="dayGridMonth" 
                         plugins={[ dayGridPlugin, interactionPlugin ]}
                         events={events}
