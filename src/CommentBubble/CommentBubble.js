@@ -38,7 +38,6 @@ const CommentBubble = (props) => {
     }
 
     const saveComment = async () => {
-        let newDate = firebase.firestore.Timestamp.fromDate(new Date())
         setShowEditModal(false)
 
         firebase
@@ -48,7 +47,7 @@ const CommentBubble = (props) => {
             .update({
                 author: author,
                 comment: editedComment,
-                date: newDate,
+                date: firebase.firestore.FieldValue.serverTimestamp(),
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
     }

@@ -36,7 +36,8 @@ const Comments = (props) => {
                     return {comment: comment.comment, date: dateString, author: comment.author, id: comment.id}
                 })
 
-            setComment(fetchedComments)
+            //reverse makes it so the most recent comments are listed first
+            setComment(fetchedComments.reverse())
             console.log(fetchedComments)
         })
     }, [])  
@@ -48,9 +49,9 @@ const Comments = (props) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setCurrentComment("")
         
         if(currentComment.length > 0) {
-            let newDate = firebase.firestore.Timestamp.fromDate(new Date())
 
             const newCommentFromDB = await firebase
                 .firestore()
@@ -58,11 +59,10 @@ const Comments = (props) => {
                 .add({
                     author: props.username,
                     comment: currentComment,
-                    date: newDate,
+                    date: firebase.firestore.FieldValue.serverTimestamp(),
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
         }
-        setCurrentComment("")
     }
 
 
