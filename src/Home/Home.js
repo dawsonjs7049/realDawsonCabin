@@ -93,6 +93,8 @@ const Home = (props) => {
                 numPeople: expectedPeople,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
+
+        setExpectedPeople(null)
     }
 
     const cancelAllInMonth = () => {
@@ -111,6 +113,11 @@ const Home = (props) => {
                 .doc(event.id)
                 .delete();
         })
+    }
+
+    const checkPeopleInput = (people) => {
+        let regex = /[A-Za-z]/
+        return regex.test(people)
     }
 
     return (
@@ -181,16 +188,14 @@ const Home = (props) => {
                                 className="modal-input" 
                                 type="text"
                                 onChange={(event) => {
-                                    if(typeof parseInt(event.target.value) === 'number') {
-                                        setExpectedPeople(event.target.value)
-                                    }
+                                    setExpectedPeople(event.target.value)
                                 }}>
                             </input>
                             <div className="modal-btn-div">
                                 <button 
                                     className="modal-button"
                                     onClick={() => {
-                                        if(expectedPeople !== null) {
+                                        if(expectedPeople !== null && !checkPeopleInput(expectedPeople)) {
                                             handleSubmit()
                                             setShowModal(false)
                                         }
@@ -219,17 +224,17 @@ const Home = (props) => {
                                     className="modal-input" 
                                     type="text"
                                     onChange={(event) => {
-                                        if(typeof parseInt(event.target.value) === 'number') {
-                                            setExpectedPeople(event.target.value)
-                                        }
+                                        setExpectedPeople(event.target.value)
                                     }}
                                     >
                                 </input>
                                 <button 
                                     className="modal-button" 
                                     onClick={() => {
-                                        updatePeople()
-                                        setShowCancelModal(false)
+                                        if(expectedPeople !== null && !checkPeopleInput(expectedPeople)) {
+                                            updatePeople()
+                                            setShowCancelModal(false)
+                                        }
                                     }}>Update
                                 </button>
                             </div>
