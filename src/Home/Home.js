@@ -68,6 +68,8 @@ const Home = (props) => {
                 username: username,
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             })
+
+        setExpectedPeople(null)
     }
 
     const cancelBooking = () => {
@@ -188,8 +190,10 @@ const Home = (props) => {
                                 <button 
                                     className="modal-button"
                                     onClick={() => {
-                                        handleSubmit()
-                                        setShowModal(false)
+                                        if(expectedPeople !== null) {
+                                            handleSubmit()
+                                            setShowModal(false)
+                                        }
                                     }}
                                     >Book'em Danno
                                 </button>
