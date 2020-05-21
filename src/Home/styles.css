@@ -28,6 +28,7 @@
     min-height: 97px;
 }
 
+
 .footer {
     height: 3rem;
     background-color: darkslategray;
@@ -101,6 +102,7 @@
 
 .calendar-div {
     margin: 2rem;
+    cursor: pointer;
 }
 
 .map-div {
