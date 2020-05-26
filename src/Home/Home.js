@@ -30,21 +30,7 @@ const Home = (props) => {
 
 
     useEffect(() => {
-
-        //fetch and load pictures
-        // const fetchImages = async () => {
-    
-        //     let result = await storageRef.child('cabinPictures').listAll();
-        //     let urlPromises = result.items.map(imageRef => imageRef.getDownloadURL())
-
-        //     return Promise.all(urlPromises)
-        // }
-
-        // const loadImages = async () => {
-        //     const urls = await fetchImages()
-        //     setPictureURLs(urls)
-        // }
-
+        //fetch and load images
         loadImages()
  
 
@@ -72,9 +58,20 @@ const Home = (props) => {
     }, [])    
 
     const fetchImages = async () => {
-    
+        //fetch all references to images in storage
         let result = await storageRef.child('cabinPictures').listAll();
-        let urlPromises = result.items.map(imageRef => imageRef.getDownloadURL())
+        let urlPromises;
+       
+        //if there are more than 20 images, set make new array of only first 20 images
+        if(result.items.length > 20) {
+            let newResult = result.items.slice(0,20)
+
+            urlPromises = newResult.map(imageRef => imageRef.getDownloadURL())
+
+        } else {
+            //less than 20 images in storage, so map through original fetched items
+            urlPromises = result.items.map(imageRef => imageRef.getDownloadURL())
+        }
 
         return Promise.all(urlPromises)
     }
