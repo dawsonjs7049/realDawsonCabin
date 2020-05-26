@@ -30,10 +30,10 @@ const Home = (props) => {
 
 
     useEffect(() => {
+
         //fetch and load images
         loadImages()
  
-
 
         //fetch reservations
         firebase
