@@ -5,10 +5,15 @@ import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import styles from './styles.css';
 import Comments from "../Comments/Comments";
+import Pictures from "../Pictures/Pictures";
 
 const firebase = require('firebase');
 
+
 const Home = (props) => {
+
+    let storageRef = firebase.storage().ref()
+    let calendarRef = React.createRef()
 
     const position = props.location.state.name.indexOf("@")
     const username = props.location.state.name.substring(0, position);
@@ -20,10 +25,31 @@ const Home = (props) => {
     const [expectedPeople, setExpectedPeople] = useState(null)
     const [events, setEvents] = useState([])
     const [helpModal, showHelpModal] = useState(false)
+    
+    const [pictureURLs, setPictureURLs] = useState([])
 
-    let calendarRef = React.createRef()
 
     useEffect(() => {
+
+        //fetch and load pictures
+        // const fetchImages = async () => {
+    
+        //     let result = await storageRef.child('cabinPictures').listAll();
+        //     let urlPromises = result.items.map(imageRef => imageRef.getDownloadURL())
+
+        //     return Promise.all(urlPromises)
+        // }
+
+        // const loadImages = async () => {
+        //     const urls = await fetchImages()
+        //     setPictureURLs(urls)
+        // }
+
+        loadImages()
+ 
+
+
+        //fetch reservations
         firebase
             .firestore()
             .collection('reservations')
@@ -44,6 +70,19 @@ const Home = (props) => {
                 setEvents(fetchedEvents)
             });
     }, [])    
+
+    const fetchImages = async () => {
+    
+        let result = await storageRef.child('cabinPictures').listAll();
+        let urlPromises = result.items.map(imageRef => imageRef.getDownloadURL())
+
+        return Promise.all(urlPromises)
+    }
+
+    const loadImages = async () => {
+        const urls = await fetchImages()
+        setPictureURLs(urls)
+    }
 
     const logout = (e) => {
         e.preventDefault();
@@ -294,6 +333,16 @@ const Home = (props) => {
                                 edit/delete your own comments and that only the 10 most recent comments are currently displayed on the website
                             </p>
 
+                            <h4 className="help-h4">Pictures</h4>
+                            <p>
+                                To upload a photo, press the "select photo" button and navigate to the photo you would 
+                                like to select and press "open" (on a Windows computer). Then press the "upload" button
+                                that appears to actually send the file. The name of the selected file is shown in the 
+                                "upload" button, if you selected the wrong photo, simply press the "select photo" button
+                                again and select the correct photo and then press the "upload" button. A progess bar will 
+                                appear above the photos to let you know the completion status of your upload.
+                            </p>
+
                             <h4 className="help-h4">Notice a Problem?</h4>
                             <p>
                                 Email me at jake906@charter.net and I will maybe possibly try to fix it
@@ -326,6 +375,11 @@ const Home = (props) => {
                     
                     </Comments>
                 </div>
+            </div>
+            <div className="pictures-div-container">
+                    <Pictures pictureURLs={pictureURLs} reloadImages={loadImages}>
+
+                    </Pictures>
             </div>
             <div className="footer">
                 Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>

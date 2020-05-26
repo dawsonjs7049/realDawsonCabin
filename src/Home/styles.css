@@ -3,6 +3,7 @@
 
 .home-container {
     font-family: 'Poppins', sans-serif;
+    overflow: hidden;
 }
 
 .home-body {
@@ -292,7 +293,13 @@
 
   .comments-div-container {
     background-color: rgb(107, 169, 250);
-    padding: 0 2rem 2rem 2rem;
+    padding: 0 2rem 4rem 2rem;
+  }
+
+  .pictures-div-container {
+      max-width: 1400px;
+      margin: auto;
+      padding-bottom: 2rem;
   }
 
 
