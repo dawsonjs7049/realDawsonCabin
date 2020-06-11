@@ -9,6 +9,8 @@ const Pictures = (props) => {
     const [uploadImage, setUploadImage] = useState(null)
     const [progressValue, setProgressValue] = useState(0)
     const [showUploadButtons, setShowUploadButtons] = useState(false)
+    const [showImageModal, setShowImageModal] = useState(false)
+    const [selectedImageURL, setSelectedImageURL] = useState('')
 
     let storageRef = firebase.storage().ref()
     let { pictureURLs, reloadImages } = props
@@ -46,6 +48,13 @@ const Pictures = (props) => {
 
     return (
         <div className="pictures-container">
+            {showImageModal &&
+                <div className="imageModalContainer">
+                    <img className="modalImage" src={selectedImageURL}></img>
+                    <button type="button" className="modalCloseButton" onClick={() => setShowImageModal(false)}>Close</button>
+                </div>
+            }
+
             <h2>Upload a Picture!</h2>
 
             <div className="buttons-container">
@@ -65,7 +74,12 @@ const Pictures = (props) => {
             <div className="pictures">
                 {
                     pictureURLs.map((url, index) => {
-                        return <img className="picture" key={index} src={url}></img>
+                        return <img className="picture" key={index} src={url} onClick={() => {
+                            console.log("selected image")
+                            setShowImageModal(true)
+                            setSelectedImageURL(url)
+                            console.log(showImageModal, selectedImageURL)
+                        }}></img>
                     })
                 }
             </div>

@@ -45,6 +45,10 @@
     border-radius: 5px;
 }
 
+.picture:hover {
+    cursor: pointer;
+}
+
 .inputfile {
 	width: 0.1px;
 	height: 0.1px;
@@ -99,3 +103,39 @@ progress {
     margin: 2rem 0 1rem 0;
 }
 
+.imageModalContainer {
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.modalImage {
+    height: 80vh;
+    width: auto;
+    max-width: 90vw;
+    border-radius: 5px;
+    border: 1px solid ghostwhite;
+}
+
+.modalCloseButton {
+    background-color: red;
+    width: 25vw;
+    height: 2rem;
+    color: white;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 20px;
+}
+
+.modalCloseButton:hover {
+    background-color: rgb(173, 2, 2);
+}

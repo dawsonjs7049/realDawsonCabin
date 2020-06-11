@@ -3,6 +3,7 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
+import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import styles from './styles.css';
 import Comments from "../Comments/Comments";
 import Pictures from "../Pictures/Pictures";
@@ -16,7 +17,8 @@ const Home = (props) => {
     let calendarRef = React.createRef()
 
     const position = props.location.state.name.indexOf("@")
-    const username = props.location.state.name.substring(0, position);
+    let username = props.location.state.name.substring(0, position);
+    username = username.charAt(0).toUpperCase() + username.slice(1)
 
     const [simpleDate, setSimpleDate] = useState(null)
     const [selectedDate, setSelectedDate] = useState('')
@@ -25,8 +27,13 @@ const Home = (props) => {
     const [expectedPeople, setExpectedPeople] = useState(null)
     const [events, setEvents] = useState([])
     const [helpModal, showHelpModal] = useState(false)
+    const [showImageModal, setShowImageModal] = useState(false)
     
     const [pictureURLs, setPictureURLs] = useState([])
+
+    const changeState = (showImageModal) => {
+        setShowImageModal(!showImageModal)
+    }
 
 
     useEffect(() => {
@@ -188,8 +195,16 @@ const Home = (props) => {
                     <FullCalendar 
                         ref={calendarRef}
                         defaultView="dayGridMonth" 
-                        plugins={[ dayGridPlugin, interactionPlugin ]}
-                        events={events}
+                        plugins={[ dayGridPlugin, interactionPlugin, googleCalendarPlugin ]}
+                        // events={events}
+                        googleCalendarApiKey="AIzaSyATsMPLPyPHnbg-gmZqtQPT1a_sdZk-aE8"
+                        eventSources={[
+                            {events},
+                            {
+                                googleCalendarId: 'en.usa#holiday@group.v.calendar.google.com',
+                                color: 'green'
+                            }
+                        ]}
                         dateClick={(info) => {
                             setSimpleDate(info.dateStr)
                             setSelectedDate(info.date)
@@ -374,9 +389,9 @@ const Home = (props) => {
                 </div>
             </div>
             <div className="pictures-div-container">
-                    <Pictures pictureURLs={pictureURLs} reloadImages={loadImages}>
+                <Pictures pictureURLs={pictureURLs} reloadImages={loadImages}>
 
-                    </Pictures>
+                </Pictures>
             </div>
             <div className="footer">
                 Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>
