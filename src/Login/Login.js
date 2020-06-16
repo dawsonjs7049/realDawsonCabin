@@ -45,12 +45,12 @@ const Login = (props) => {
                 <div className="form-container">
                     <form onSubmit={(e) => submitLogin(e)}>
                         <div className="username-div">
-                            <input required id="email-input" spellcheck="false" type="text" placeholder="email" onChange={(e) => userTyping('email', e)} />
-                            <i class="far fa-envelope"></i>
+                            <input required id="email-input" spellCheck="false" type="text" placeholder="email" onChange={(e) => userTyping('email', e)} />
+                            <i className="far fa-envelope"></i>
                         </div>
                         <div>
                             <input required id="password-input" spellCheck="false" type="password" placeholder="password" onChange={(e) => userTyping('password', e)} />
-                            <i class="fas fa-key"></i>
+                            <i className="fas fa-key"></i>
                         </div>
                         {
                             loginError ? 
