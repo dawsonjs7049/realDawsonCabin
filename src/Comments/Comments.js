@@ -53,7 +53,7 @@ const Comments = (props) => {
         
         if(currentComment.length > 0) {
 
-            const newCommentFromDB = await firebase
+            await firebase
                 .firestore()
                 .collection('Comments')
                 .add({
@@ -77,7 +77,7 @@ const Comments = (props) => {
             <div className="comments-body">
                 {comment &&
                     comment.map(comment => {
-                        return <CommentBubble key={comment.id} currentComment={currentComment} username={props.username} comment={comment.comment} author={comment.author} date={comment.date} id={comment.id}></CommentBubble>
+                        return <CommentBubble key={comment.id} username={props.username} comment={comment.comment} author={comment.author} date={comment.date} id={comment.id}></CommentBubble>
                     })
                 }
             </div>

@@ -13,7 +13,6 @@ const firebase = require('firebase');
 
 const Home = (props) => {
 
-    let storageRef = firebase.storage().ref()
     let calendarRef = React.createRef()
 
     const position = props.location.state.name.indexOf("@")
@@ -125,7 +124,7 @@ const Home = (props) => {
     const handleSubmit = async () => {
         let newDate = firebase.firestore.Timestamp.fromDate(new Date(selectedDate))
 
-        const newFromDB = await firebase
+        await firebase
             .firestore()
             .collection('reservations')
             .add({
@@ -391,6 +390,7 @@ const Home = (props) => {
                 <div className="map-div">
                     <div className="gmap_canvas">
                         <iframe 
+                            title="gmap"
                             width="600" 
                             height="500" 
                             id="gmap_canvas" 

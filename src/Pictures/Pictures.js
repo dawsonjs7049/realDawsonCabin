@@ -121,7 +121,7 @@ const Pictures = (props) => {
         <div className="pictures-container">
             {showImageModal &&
                 <div className="imageModalContainer">
-                    <img className="modalImage" src={selectedImage.imageURL}></img>
+                    <img className="modalImage" src={selectedImage.imageURL} alt="modal"></img>
                     <div className={username === selectedImage.owner ? "comment-div" : "comment-div-small"}>
                         <div className="comment-p">
                             {showEditModal ? 
@@ -174,11 +174,9 @@ const Pictures = (props) => {
             </div>
         
             <div className="pictures">
-                
                 {chunkedImages.length > 0 && 
-                    
                     chunkedImages[chunkIndex].map((image, index) => {
-                        return <img className="picture" key={index} src={image.imageURL} onClick={() => {
+                        return <img className="picture" key={index} src={image.imageURL} alt="layout" onClick={() => {
                             setShowImageModal(true)
                             setSelectedImage(image)
                             setUpdatedComment(image.comment)

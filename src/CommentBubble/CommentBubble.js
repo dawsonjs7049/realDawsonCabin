@@ -5,7 +5,7 @@ import styles from "./styles.css"
 const firebase = require('firebase');
 
 const CommentBubble = (props) => {
-    const { comment, author, date, id, currentComment, username } = props;
+    const { comment, author, date, id, username } = props;
 
     const [editedComment, setEditedComment] = useState("")
     const [showEditModal, setShowEditModal] = useState(false)
