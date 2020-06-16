@@ -27,21 +27,11 @@ const Home = (props) => {
     const [expectedPeople, setExpectedPeople] = useState(null)
     const [events, setEvents] = useState([])
     const [helpModal, showHelpModal] = useState(false)
-    const [showImageModal, setShowImageModal] = useState(false)
-    
-    const [pictureURLs, setPictureURLs] = useState([])
-
-    const changeState = (showImageModal) => {
-        setShowImageModal(!showImageModal)
-    }
+    const [imageData, setImageData] = useState([])
 
 
     useEffect(() => {
-
-        //fetch and load images
-        loadImages()
- 
-
+        
         //fetch reservations
         firebase
             .firestore()
@@ -62,7 +52,39 @@ const Home = (props) => {
                 console.log(fetchedEvents)
                 setEvents(fetchedEvents)
             });
+
+        //fetch images
+        firebase
+            .firestore()
+            .collection('images')
+            .orderBy('date')
+            .onSnapshot(serverUpdate => {
+                const images = serverUpdate.docs.map(_doc => {
+                    const data = _doc.data();
+                    data['id'] = _doc.id;
+                    return data;
+                });
+
+                let fetchedImages = images.map(image => {
+                    let date, dateString
+                    if(image.date) {
+                        date = image.date.toDate()
+                    } else {
+                        //another workaround for pictures just added, doesn't get date correctly from firebase?
+                        date = new Date()
+                    }
+
+                    dateString = date.getUTCFullYear() + "-" + ("0" + (date.getUTCMonth()+1)).slice(-2) + "-" + ("0" + date.getUTCDate()).slice(-2)
+
+                    return {comment: image.comment, date: dateString, id: image.id, imageURL: image.imageURL, owner: image.owner, filename: image.filename}
+                })
+                
+                setImageData(fetchedImages)
+            })
     }, [])    
+
+    /* 
+    Example of promises and async for future me...
 
     const fetchImages = async () => {
         //fetch all references to images in storage
@@ -87,6 +109,7 @@ const Home = (props) => {
         const urls = await fetchImages()
         setPictureURLs(urls)
     }
+    */
 
     const logout = (e) => {
         e.preventDefault();
@@ -172,13 +195,13 @@ const Home = (props) => {
                         Help
                     </button>
                     <button className="logout-btn" onClick={(e) => logout(e)}>
-                        Logout &nbsp; <i class="fas fa-sign-out-alt"></i>
+                        Logout &nbsp; <i className="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
             </div>
             <div className="widget-div">
                 <a 
-                    class="weatherwidget-io" 
+                    className="weatherwidget-io" 
                     href="https://forecast7.com/en/45d88n92d37/webster/?unit=us" 
                     data-label_1="WEBSTER" 
                     data-label_2="WEATHER" 
@@ -196,7 +219,6 @@ const Home = (props) => {
                         ref={calendarRef}
                         defaultView="dayGridMonth" 
                         plugins={[ dayGridPlugin, interactionPlugin, googleCalendarPlugin ]}
-                        // events={events}
                         googleCalendarApiKey="AIzaSyATsMPLPyPHnbg-gmZqtQPT1a_sdZk-aE8"
                         eventSources={[
                             {events},
@@ -367,16 +389,16 @@ const Home = (props) => {
                     }
                 </div>
                 <div className="map-div">
-                    <div class="gmap_canvas">
+                    <div className="gmap_canvas">
                         <iframe 
                             width="600" 
                             height="500" 
                             id="gmap_canvas" 
                             src="https://maps.google.com/maps?q=29035%20Pardun%20Road%20Danbury%20Wi&t=k&z=13&ie=UTF8&iwloc=&output=embed" 
-                            frameborder="0" 
+                            frameBorder="0" 
                             scrolling="no" 
-                            marginheight="0" 
-                            marginwidth="0">
+                            marginHeight="0" 
+                            marginWidth="0">
                         </iframe>
                     </div>
                 </div>
@@ -389,12 +411,12 @@ const Home = (props) => {
                 </div>
             </div>
             <div className="pictures-div-container">
-                <Pictures pictureURLs={pictureURLs} reloadImages={loadImages}>
+                <Pictures imageData={imageData} username={username}>
 
                 </Pictures>
             </div>
             <div className="footer">
-                Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>
+                Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDestylecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>
             </div>
         </div>
     )

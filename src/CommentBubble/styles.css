@@ -8,6 +8,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .bubble-comment-div {
@@ -75,4 +76,8 @@
 
 .edit-area:hover {
     border-bottom: 2px solid rgb(28, 130, 247);
+}
+
+.edit-area:focus {
+    border: none;
 }

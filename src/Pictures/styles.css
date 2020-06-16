@@ -118,7 +118,7 @@ progress {
 }
 
 .modalImage {
-    height: 80vh;
+    height: 75vh;
     width: auto;
     max-width: 90vw;
     border-radius: 5px;
@@ -139,3 +139,153 @@ progress {
 .modalCloseButton:hover {
     background-color: rgb(173, 2, 2);
 }
+
+.comment-div {
+    margin-top: 1rem;
+    width: 65vw;
+    max-width: 1400px;
+    min-width: 30rem;
+    height: 8rem;
+    background-color: ghostwhite;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 2px solid ghostwhite;
+    border-bottom: none;
+}
+
+.comment-div-small {
+    margin-top: 1rem;
+    width: 65vw;
+    max-width: 1400px;
+    min-width: 30rem;
+    height: 6rem;
+    background-color: ghostwhite;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 2px solid ghostwhite;
+    border-bottom: none;
+}
+
+.image-buttons-div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    width: 100%;
+}
+
+.comment-edit-btn {
+    width: 50%;
+    height: 2rem;
+    color: white;
+    background-color: green;
+    border: none;
+    font-size: 17px;
+    border-bottom-left-radius: 5px;
+
+}
+
+.comment-edit-btn:hover {
+    background-color: rgb(0, 88, 0);
+}
+
+.image-delete-btn {
+    width: 50%;
+    height: 2rem;
+    color: white;
+    background-color: red;
+    border: none;
+    font-size: 17px;
+    border-bottom-right-radius: 5px;
+}
+
+.image-delete-btn:hover {
+    background-color: rgb(161, 4, 4);
+}
+
+.comment-p {
+    height: 4rem;
+    width: 100%;
+}
+
+.edit-area-2 {
+    display: block;
+    width: 97%;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 3px;
+    font-family: 'Poppins', sans-serif;
+    overflow: auto;
+    background-color: ghostwhite;
+    font-size: 16px;
+    margin: .5rem .5rem 0 .5rem;
+}
+
+
+.edit-div {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: none;
+    justify-content: space-between;
+    align-items: center;
+    margin: .5rem .5rem 0 .5rem;
+}
+
+.edit-save-btn {
+    width: 2rem;
+    height: 2.5rem;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+    margin-left: .5rem;
+}
+
+.edit-save-btn:hover {
+    background-color: rgb(1, 85, 1);
+}
+
+textarea {
+    resize: none;
+    outline: none;
+}
+
+.arrow-btns-div{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.arrow {
+    height: 2.5rem;
+    width: 4rem;
+    background-color: teal;
+    border: none;
+    border-radius: 5px;
+}
+
+.arrow-left {
+    margin-right: 1rem;
+}
+
+.arrow:hover {
+    background-color: rgb(0, 95, 95);
+}
+
+.picture-comment-input {
+   display: block;
+   width: 75vw;
+   max-width: 1400px;
+   background-color: transparent;
+   height: 2rem;
+   margin: auto; 
+   border-bottom: 2px solid rgb(107, 169, 250);
+}
+
+.comment-input:hover {
+    border-bottom: 2px solid teal;
+}
+
+
+
