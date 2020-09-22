@@ -5,6 +5,7 @@ import * as serviceWorker from './serviceWorker';
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import Login from './Login/Login';
 import Home from './Home/Home';
+
 const firebase = require('firebase');
 require('firebase/firestore');
 
@@ -20,6 +21,10 @@ const firebaseConfig = {
 };
 
 firebase.initializeApp(firebaseConfig);
+
+firebase.auth().onAuthStateChanged(function(user) {
+  this.setState({ user: user });
+});
 
 const routing = (
   <Router>
