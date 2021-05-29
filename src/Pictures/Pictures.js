@@ -121,34 +121,41 @@ const Pictures = (props) => {
         <div className="pictures-container">
             {showImageModal &&
                 <div className="imageModalContainer">
-                    <img className="modalImage" src={selectedImage.imageURL} alt="modal"></img>
-                    <div className={username === selectedImage.owner ? "comment-div" : "comment-div-small"}>
-                        <div className="comment-p">
-                            {showEditModal ? 
-                                (
-                                    <div className="edit-div">
-                                        <textarea className="edit-area" value={updatedComment} onChange={(e) => setUpdatedComment(e.target.value)}></textarea>
-                                        <button className="edit-save-btn" onClick={() => handleEdit()}><i className="far fa-save fa-lg"></i></button>
+                    <div className="imageModalContents">
+                        <img className="modalImage" src={selectedImage.imageURL} alt="modal"></img>
+                        <div className="comment-wrapper">
+                            <div className={username === selectedImage.owner ? "comment-div" : "comment-div-small"}>
+                            <div style={{textAlign: "center", fontSize: "18px", height: "10%"}}>Posted by {selectedImage.owner} on {selectedImage.date}<hr style={{marginBottom: "0", width: "90%"}}></hr></div>
+                                <div className="comment-p">
+                                    {showEditModal ? 
+                                        (
+                                            <div className="edit-div">
+                                                <textarea className="edit-area" value={updatedComment} onChange={(e) => setUpdatedComment(e.target.value)}></textarea>
+                                                <button className="edit-save-btn" onClick={() => handleEdit()}><i className="far fa-save fa-lg"></i></button>
+                                            </div>
+                                        ) :
+                                        (
+                                            <textarea className="edit-area-2" value={updatedComment} readOnly={true}></textarea>
+                                        )
+                                    }
+                                </div>
+                                
+                                {selectedImage.owner === username &&
+                                    <div className="image-buttons-div">
+                                        <button className="comment-edit-btn" onClick={() => setShowEditModal(true)}>Edit Comment<i className="icon far fa-edit fa-lg"></i></button>
+                                        <button className="image-delete-btn" onClick={() => handleDelete()}>Delete Image<i className="icon far fa-trash-alt fa-lg"></i></button>
                                     </div>
-                                ) :
-                                (
-                                    <textarea className="edit-area-2" value={updatedComment} readOnly={true}></textarea>
-                                )
-                            }
-                        </div>
-                        <div style={{textAlign: "right", marginRight: ".5rem", fontSize: "14px"}}>Posted by {selectedImage.owner} on {selectedImage.date}</div>
-                        {selectedImage.owner === username &&
-                            <div className="image-buttons-div">
-                                <button className="comment-edit-btn" onClick={() => setShowEditModal(true)}>Edit Comment<i className="icon far fa-edit fa-lg"></i></button>
-                                <button className="image-delete-btn" onClick={() => handleDelete()}>Delete Image<i className="icon far fa-trash-alt fa-lg"></i></button>
+                                }
                             </div>
-                        }
+                            <button type="button" className="modalCloseButton" onClick={() => {
+                                setShowImageModal(false)
+                                setUpdatedComment("")
+                                setShowEditModal(false)
+                            }}>Close<i className="icon fas fa-times"></i></button>
+                        </div>
+                        
                     </div>
-                    <button type="button" className="modalCloseButton" onClick={() => {
-                        setShowImageModal(false)
-                        setUpdatedComment("")
-                        setShowEditModal(false)
-                    }}>Close<i className="icon fas fa-times"></i></button>
+                    
                 </div>
             }
 
@@ -156,7 +163,7 @@ const Pictures = (props) => {
 
             <div className="buttons-container">
                 <input type="file" name="file" id="file" className="inputfile" onChange={(e) => handleFileSelect(e)}/>
-                <label for="file" className="input-label">Select Photo <i className="fas fa-image icon"></i></label>
+                <label htmlFor="file" className="input-label">Select Photo <i className="fas fa-image icon"></i></label>
                 {showUploadButtons &&
                     <button className="upload-button" onClick={() => handleUpload()}>Upload "{uploadImage.name}" <i className="fas fa-file-upload icon"></i></button>
                 }

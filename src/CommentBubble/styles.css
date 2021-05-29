@@ -8,7 +8,13 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
+    transition: .75s;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.bubble-container:hover {
+    margin: 2rem 0 1rem 0;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.486), 0 6px 20px 0 rgba(0, 0, 0, 0.377);
 }
 
 .bubble-comment-div {
@@ -72,6 +78,7 @@
     overflow: auto;
     background-color: ghostwhite;
     font-size: 16px;
+    height: 90%;
 }
 
 .edit-area:hover {

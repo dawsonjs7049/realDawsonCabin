@@ -50,7 +50,7 @@ const Login = (props) => {
                         </div>
                         <div>
                             <input required id="password-input" spellCheck="false" type="password" placeholder="password" onChange={(e) => userTyping('password', e)} />
-                            <i className="fas fa-key"></i>
+                            <i className="fas fa-key" style={{marginBottom: "15px"}}></i>
                         </div>
                         {
                             loginError ? 

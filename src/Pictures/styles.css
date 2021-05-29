@@ -41,12 +41,13 @@
     height: 400px;
     width: 400px;
     margin-bottom: 1rem;
-    border: 2px solid teal;
+    border: 3px solid rgb(2, 32, 167);
     border-radius: 5px;
 }
 
 .picture:hover {
     cursor: pointer;
+    animation: bounce 1s infinite alternate;
 }
 
 .inputfile {
@@ -103,7 +104,17 @@ progress {
     margin: 2rem 0 1rem 0;
 }
 
+.imageModalContents {
+    display: flex;
+    flex-direction: row;
+    vertical-align: middle;
+    max-height: 90vh;
+}
+
 .imageModalContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     position: fixed;
     z-index: 1000;
     top: 0;
@@ -111,59 +122,61 @@ progress {
     width: 100%;
     height: 100%;
     background-color: rgba(0,0,0,.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
 }
 
 .modalImage {
-    height: 65vh;
-    width: auto;
-    max-width: 90vw;
+    height: auto;
+    width: 50%;
+    max-height: 90vh;
     border-radius: 5px;
     border: 1px solid ghostwhite;
+    margin-left: 2rem;
 }
 
 .modalCloseButton {
+    display: block;
     background-color: red;
-    width: 25vw;
+    width: 50%;
     height: 2rem;
     color: white;
-    margin-top: 1rem;
     border: none;
     border-radius: 5px;
     font-size: 20px;
+    margin: auto;
+    margin-top: 1rem;
 }
 
 .modalCloseButton:hover {
     background-color: rgb(173, 2, 2);
 }
 
+.comment-wrapper {
+    width: 50%;
+    min-height: 100%;
+    margin: 0 2rem 0 2rem;
+}
+
 .comment-div {
-    margin-top: 1rem;
-    width: 65vw;
-    max-width: 1400px;
-    min-width: 30rem;
-    height: 8rem;
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
     background-color: ghostwhite;
     font-size: 15px;
     border-radius: 5px;
     border: 2px solid ghostwhite;
     border-bottom: none;
+    padding-bottom: 1px;
 }
 
 .comment-div-small {
-    margin-top: 1rem;
-    width: 65vw;
-    max-width: 1400px;
-    min-width: 30rem;
-    height: 6rem;
+    width: 100%;
+    height: 100%;
     background-color: ghostwhite;
     font-size: 15px;
     border-radius: 5px;
     border: 2px solid ghostwhite;
     border-bottom: none;
+    margin-bottom: 1rem;
 }
 
 .image-buttons-div {
@@ -172,11 +185,12 @@ progress {
     flex-wrap: nowrap;
     justify-content: center;
     width: 100%;
+    height: 10%;
 }
 
 .comment-edit-btn {
     width: 50%;
-    height: 2rem;
+    height: 100%;
     color: white;
     background-color: green;
     border: none;
@@ -191,7 +205,7 @@ progress {
 
 .image-delete-btn {
     width: 50%;
-    height: 2rem;
+    height: 100%;
     color: white;
     background-color: red;
     border: none;
@@ -204,7 +218,7 @@ progress {
 }
 
 .comment-p {
-    height: 4rem;
+    height: 80%;
     width: 100%;
 }
 
@@ -218,7 +232,8 @@ progress {
     overflow: auto;
     background-color: ghostwhite;
     font-size: 16px;
-    margin: .5rem .5rem 0 .5rem;
+    height: 100%;
+    margin: 0 .5rem 0 .5rem;
 }
 
 
@@ -228,7 +243,8 @@ progress {
     flex-wrap: none;
     justify-content: space-between;
     align-items: center;
-    margin: .5rem .5rem 0 .5rem;
+    margin: 0 .5rem 0 .5rem;
+    height: 100%;
 }
 
 .edit-save-btn {
@@ -286,6 +302,23 @@ textarea {
 .comment-input:hover {
     border-bottom: 2px solid teal;
 }
+
+@keyframes bounce {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-5px);
+    }
+  }
+  @-webkit-keyframes bounce {
+    from {
+      transform: translateY(0px);
+    }
+    to {
+      transform: translateY(-5px);
+    }
+  }
 
 
 

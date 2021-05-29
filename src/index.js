@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import * as serviceWorker from './serviceWorker';
+
 import { Route, BrowserRouter as Router } from 'react-router-dom';
 import Login from './Login/Login';
 import Home from './Home/Home';
+import "firebase/auth";
 
 const firebase = require('firebase');
+
 require('firebase/firestore');
 
 const firebaseConfig = {
@@ -22,14 +24,10 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-firebase.auth().onAuthStateChanged(function(user) {
-  this.setState({ user: user });
-});
-
 const routing = (
   <Router>
     <div id='routing-container'>
-      <Route path="/" exact component={Login} />
+      <Route path="/" exact component={Login}></Route>
       <Route path='/login' component={Login}></Route>
       <Route path='/home' component={Home}></Route>
     </div>
@@ -38,7 +36,4 @@ const routing = (
 
 ReactDOM.render(routing,document.getElementById('root'));
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+

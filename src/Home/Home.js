@@ -7,9 +7,16 @@ import googleCalendarPlugin from '@fullcalendar/google-calendar';
 import styles from './styles.css';
 import Comments from "../Comments/Comments";
 import Pictures from "../Pictures/Pictures";
+import CancelModal from "../CancelModal/CancelModal";
+import HelpModal from "../HelpModal/HelpModal";
+import BookingModal from "../BookingModal/BookingModal";
+import bookingDemo from "./booking-demo.mp4";
 
 const firebase = require('firebase');
 
+// firebase.auth().onAuthStateChanged(function(user) {
+//     this.setState({ user: user });
+// });
 
 const Home = (props) => {
 
@@ -20,16 +27,39 @@ const Home = (props) => {
     username = username.charAt(0).toUpperCase() + username.slice(1)
 
     const [simpleDate, setSimpleDate] = useState(null)
-    const [selectedDate, setSelectedDate] = useState('')
+    const [selectedDate, setSelectedDate] = useState()
     const [showModal, setShowModal] = useState(false)
     const [showCancelModal, setShowCancelModal] = useState(false)
     const [expectedPeople, setExpectedPeople] = useState(null)
     const [events, setEvents] = useState([])
     const [helpModal, showHelpModal] = useState(false)
     const [imageData, setImageData] = useState([])
-
+    const [sawTip, setSawTip] = useState(false);
+    const [tipId, setTipId] = useState();
 
     useEffect(() => {
+
+        // fetch tips
+        firebase
+            .firestore()
+            .collection('tips')
+            .onSnapshot(serverUpdate => {
+                let tips = serverUpdate.docs.map(_doc => {
+                    let data = _doc.data();
+                    // data['user'] = _doc.user;
+                    // data['hasSeen'] = _doc.tipSeen;
+                    data['id'] = _doc.id;
+                    return data;
+                    // return { user: _doc.data.user, hasSeen: _doc.data.tipSeen };
+                })
+                
+                tips = tips.filter(tip => tip.user == username);
+                
+                setSawTip(tips[0].tipSeen);
+                setTipId(tips[0].id);
+
+                console.log("TIPS: " + JSON.stringify(tips, null, " "));
+            })
         
         //fetch reservations
         firebase
@@ -46,9 +76,9 @@ const Home = (props) => {
                         let date = reservation.reservationDate.toDate()
                         const month = ("0" + (date.getUTCMonth() + 1))
                         let dateString = date.getUTCFullYear() + "-" + ("0" + (date.getUTCMonth()+1)).slice(-2) + "-" + ("0" + date.getUTCDate()).slice(-2)
-                        return {title: reservation.username + " - " + reservation.numPeople + " total", date: dateString, id: reservation.id, totalPeople: reservation.numPeople, month: month}
+                        return {title: reservation.username + " - " + reservation.numPeople + " total", date: dateString, id: reservation.id, totalPeople: reservation.numPeople, month: month, fullDate: new Date(date) }
                     })
-                console.log(fetchedEvents)
+                console.log("SETTING EVENTS");
                 setEvents(fetchedEvents)
             });
 
@@ -77,10 +107,12 @@ const Home = (props) => {
 
                     return {comment: image.comment, date: dateString, id: image.id, imageURL: image.imageURL, owner: image.owner, filename: image.filename}
                 })
-                
+                console.log("SETTING IMAGES...");
                 setImageData(fetchedImages)
             })
     }, [])    
+
+
 
     /* 
     Example of promises and async for future me...
@@ -110,6 +142,16 @@ const Home = (props) => {
     }
     */
 
+    const toggleModalAnimation = () =>
+    {
+        const modals = Array.from(document.getElementsByClassName('modalWrapper'));
+        
+        modals.forEach((element) => {
+            console.log("MODAL: " + element);
+            element.classList.toggle('modal-show');
+        });
+    }
+
     const logout = (e) => {
         e.preventDefault();
 
@@ -121,43 +163,49 @@ const Home = (props) => {
             })
     }
 
-    const handleSubmit = async () => {
-        let newDate = firebase.firestore.Timestamp.fromDate(new Date(selectedDate))
+    const handleSubmit = () => {
+    
+        selectedDate.forEach(date => {
+            let newDate = firebase.firestore.Timestamp.fromDate(new Date(date))
 
-        await firebase
-            .firestore()
-            .collection('reservations')
-            .add({
-                numPeople: expectedPeople,
-                reservationDate: newDate,
-                username: username,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
-
+            firebase
+                .firestore()
+                .collection('reservations')
+                .add({
+                    numPeople: expectedPeople,
+                    reservationDate: newDate,
+                    username: username,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+        })
+        
         setExpectedPeople(null)
     }
 
     const cancelBooking = () => {
-        let myEvent = events.filter(event => event.date === simpleDate)
 
-        firebase
-        .firestore()
-        .collection('reservations')
-        .doc(myEvent[0].id)
-        .delete();
+        selectedDate.forEach(event => {
+            firebase
+                .firestore()
+                .collection('reservations')
+                .doc(event.id)
+                .delete();
+        })
+       
     }
 
     const updatePeople = () => {
-        let myEvent = events.filter(event => event.date === simpleDate)
-        
-        firebase
-            .firestore()
-            .collection('reservations')
-            .doc(myEvent[0].id) 
-            .update({
-                numPeople: expectedPeople,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            })
+
+        selectedDate.forEach(event => {
+            firebase
+                .firestore()
+                .collection('reservations')
+                .doc(event.id) 
+                .update({
+                    numPeople: expectedPeople,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                })
+        })
 
         setExpectedPeople(null)
     }
@@ -180,9 +228,48 @@ const Home = (props) => {
         })
     }
 
+    const getDateRange = (start, end) => {
+        
+        for(var arr=[],dt=new Date(start); dt<=end; dt.setDate(dt.getDate()+1)){
+            arr.push(new Date(dt));
+        }
+
+        arr.pop();
+
+        return arr;
+    }
+
     const checkPeopleInput = (people) => {
         let regex = /[A-Za-z]/
         return regex.test(people)
+    }
+
+    const formatDate = (date) => {
+        
+        var d = new Date(date);
+        var month = '' + (d.getMonth() + 1);
+        var day = '' + d.getDate();
+        var year = d.getFullYear();
+    
+        if (month.length < 2) 
+            month = '0' + month;
+        if (day.length < 2) 
+            day = '0' + day;
+    
+        return [month, day, year].join('-');
+    }
+
+    const handleSawTip = () => {
+        setSawTip(true);
+
+        firebase
+            .firestore()
+            .collection('tips')
+            .doc(tipId) 
+            .update({
+                tipSeen: true,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            })
     }
 
     return (
@@ -190,7 +277,7 @@ const Home = (props) => {
             <div className="header">
                 <span>The Pigeon Koop</span>
                 <div className="header-buttons-container">
-                    <button className="help-btn" onClick={() => showHelpModal(!helpModal)}>
+                    <button className="help-btn" onClick={() => { showHelpModal(!helpModal); toggleModalAnimation(); } }>
                         Help
                     </button>
                     <button className="logout-btn" onClick={(e) => logout(e)}>
@@ -213,12 +300,90 @@ const Home = (props) => {
                     <h1>Welcome, you are signed in as {username}</h1>
                     <button className="clear-all-button" onClick={() => cancelAllInMonth()}>Clear All Reservations in Month</button>
                 </div>
+
+                {
+                    !sawTip &&
+                    <div>
+                        <h4 style={{textAlign: 'center'}}>New! You can now click and drag to select multiple days at once</h4>
+                        <video width="360" height="415" autoPlay muted loop style={{ display: 'block', margin: 'auto', borderRadius: '5px', boxShadow: '0px 0px 10px 3px teal'}}>
+                            <source src={bookingDemo} type="video/mp4"></source>
+                            <source src={bookingDemo} type="video/ogg"></source>
+                            Your browser does not support the video tag.
+                        </video>
+                        <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'center', alignContent: 'center', marginTop: '2rem'}}>
+                            <button className="accept-btn"  onClick={() => handleSawTip() }>Got it!</button>
+                            <span style={{ padding: '4px 2rem 0 2rem'}}>OR</span>
+                            <button className="rude-btn" onClick={() => handleSawTip() }>Took you long enough...</button>
+                        </div>
+                    </div>
+                }
+                
                 <div className="calendar-div">
                     <FullCalendar 
+                        plugins={[ dayGridPlugin, interactionPlugin, googleCalendarPlugin ]}
                         ref={calendarRef}
                         defaultView="dayGridMonth" 
-                        plugins={[ dayGridPlugin, interactionPlugin, googleCalendarPlugin ]}
+                        selectable={true}
                         googleCalendarApiKey="AIzaSyATsMPLPyPHnbg-gmZqtQPT1a_sdZk-aE8"
+                        select={(info) => {
+                            let dates = getDateRange(info.start, info.end);
+
+                            // if selected dates has dates user already booked, filter out all non-user booked dates and open cancellation modal
+                            let userEvents = [];
+                            dates.forEach(date => {
+                                let event = events.filter(event => {
+                                    return ((String(event.fullDate) === String(date)) && (event.title.includes(username)))
+                                })
+
+                                if(event[0])
+                                {
+                                    // if an event was returned, then this date is taken by the user already
+                                    userEvents.push(event[0]);
+                                    setExpectedPeople(event[0].totalPeople);
+                                }
+                            });
+                            if(userEvents.length > 0)
+                            {
+                                // open cancellation modal with userDates
+
+                                var dateRangeString = (userEvents.length > 1 ? formatDate(userEvents[0].fullDate) + "  ->  " + formatDate(userEvents[userEvents.length - 1].fullDate) : formatDate(userEvents[0].fullDate));
+                                setSimpleDate(dateRangeString);
+                                setSelectedDate(userEvents);
+                                setShowCancelModal(true);
+                                toggleModalAnimation();
+                            }
+                            else
+                            {
+                                // do another filter to check that selected dates don't belong to anyone else
+                                let takenDates = [];
+                                dates.forEach(date => {
+                                    let event = events.filter(event => {
+                                        return ((String(event.fullDate) === String(date)) && !(event.title.includes(username)))
+                                    })
+                                    
+                                    if(event[0])
+                                    {
+                                        // if an event was returned, then this date is taken by someone else already
+                                        takenDates.push(date);
+                                        setExpectedPeople(event[0].totalPeople);
+                                    }
+                                })
+                                if(takenDates.length > 0)
+                                {
+                                    // the selected dates included dates already taken by someone else, just do nothing
+                                }
+                                else
+                                {
+                                    // the selected dates were not taken by the user or by anyone else, open booking modal 
+
+                                    var dateRangeString = (dates.length > 1 ? formatDate(dates[0]) + "  ->  " + formatDate(dates[dates.length - 1]) : formatDate(dates[0]));
+                                    setSimpleDate(dateRangeString);
+                                    setSelectedDate(dates);
+                                    setShowModal(true);
+                                    toggleModalAnimation();
+                                }
+                            }
+                        }}
                         eventSources={[
                             {events},
                             {
@@ -226,167 +391,42 @@ const Home = (props) => {
                                 color: 'green'
                             }
                         ]}
-                        dateClick={(info) => {
-                            setSimpleDate(info.dateStr)
-                            setSelectedDate(info.date)
-                            
-                            let myEvent = events.filter(event => event.date === info.dateStr)
-                            
-                            if(myEvent[0]){
-                                // so we can access expected people in the update/cancel modal
-                                setExpectedPeople(myEvent[0].totalPeople)
-
-                                if(myEvent[0].title.includes(username)) {
-                                    //this is a date that i "own" - show cancel modal
-                                    setShowCancelModal(true)
-                                } else {
-                                    //this is not adate that i "own" - can't cancel or take
-                                }
-                            } else {
-                                //date is not owned by anyone - show booking modal
-                                setShowModal(true)
-                            }
-                        }}
                     >
                     </FullCalendar>
-                    {showModal &&
-                        <div className="modal">
-                            <div className="modal-header-div">
-                                <h3 className="modal-top-header">Selected Date: {simpleDate}</h3>
-                                <h3>Expected Total People?</h3>
-                            </div>
-                            <input 
-                                required
-                                className="modal-input" 
-                                type="text"
-                                onChange={(event) => {
-                                    setExpectedPeople(event.target.value)
-                                }}>
-                            </input>
-                            <div className="modal-btn-div">
-                                <button 
-                                    className="modal-button"
-                                    onClick={() => {
-                                        if(expectedPeople !== null && !checkPeopleInput(expectedPeople)) {
-                                            handleSubmit()
-                                            setShowModal(false)
-                                        }
-                                    }}
-                                    >Book'em Danno
-                                </button>
-                                <button 
-                                    className="modal-cancel"
-                                    onClick={() => {
-                                        setShowModal(false)
-                                    }}
-                                    >Cancel
-                                </button>
-                            </div>
-                        </div>
-                    }
-                    {showCancelModal &&
-                        <div className="modal-update">
-                            <div className="modal-header-div">
-                                <h3 className="modal-top-header">Selected Date: {simpleDate}</h3>
-                            </div>
-                            <div className="modal-update-body">
-                                <h3>Update People Count</h3>
-                                <input 
-                                    value={expectedPeople}
-                                    className="modal-input" 
-                                    type="text"
-                                    onChange={(event) => {
-                                        setExpectedPeople(event.target.value)
-                                    }}
-                                    >
-                                </input>
-                                <button 
-                                    className="modal-button" 
-                                    onClick={() => {
-                                        if(expectedPeople !== null && !checkPeopleInput(expectedPeople)) {
-                                            updatePeople()
-                                            setShowCancelModal(false)
-                                        }
-                                    }}>Update
-                                </button>
-                            </div>
-                            <div>
-                                <h3>OR</h3>
-                            </div>
-                            <div className="modal-update-body">
-                                <h3>Delete Booking?</h3>
-                                <button 
-                                    className="modal-button"
-                                    onClick={() => {
-                                        cancelBooking()
-                                        setShowCancelModal(false)
-                                    }}
-                                    >Yes
-                                </button>
-                                <button 
-                                    className="modal-cancel"
-                                    onClick={() => {
-                                        console.log("clicked no")
-                                        setShowCancelModal(false)
-                                    }}
-                                    >Cancel
-                                </button>
-                            </div>
-                        </div>
-                    }
-                    {helpModal &&
-                    <div className="help-modal-container">
-                        <div className="help-modal">
-                            <h4 className="help-h4">Weather</h4>
-                            <p>You can access more detailed weather forcasts by clicking anywhere on the weather banner</p>
-
-                            <h4 className="help-h4">Calendar</h4>
-                            <p>
-                                To select a date to reserve, click any open square and then enter the expected number of people that 
-                                will be there on that day, then select the top green button to book it or the bottom red button to exit                            
-                            </p>
-                            <p>
-                                To update a date you've already reserved, click on that date square and either re-enter the number of
-                                expected people and press the green "update" button, or select the "yes" button at the bottom of the 
-                                pop-up to delete your reservation. Cancel will close the modal. Please note that you can only update/delete
-                                your own reservations
-                            </p>
-
-                            <h4 className="help-h4">Comments</h4>
-                            <p>
-                                Use the comments section to update others on cabin issues, projects, or anything else
-                                that you all might find useful. Post a comment by clicking on the white rectangle input box next to the 
-                                submit button and typing your comment, then press submit when you're ready to post it. 
-                            </p>
-                            <p>
-                                If you would like to edit 
-                                a post you've previously made, you can select the green edit button on the right of the post and then select the 
-                                text on the comment to edit its content. When you're finished, press the green save button on the right to save your
-                                changes. You can also delete your comment entirely by pressing the red trash button. Please note that you may only 
-                                edit/delete your own comments and that only the 10 most recent comments are currently displayed on the website
-                            </p>
-
-                            <h4 className="help-h4">Pictures</h4>
-                            <p>
-                                To upload a photo, press the "select photo" button and navigate to the photo you would 
-                                like to select and press "open" (on a Windows computer). Then press the "upload" button
-                                that appears to actually send the file. The name of the selected file is shown in the 
-                                "upload" button, if you selected the wrong photo, simply press the "select photo" button
-                                again and select the correct photo and then press the "upload" button. A progess bar will 
-                                appear above the photos to let you know the completion status of your upload.
-                            </p>
-
-                            <h4 className="help-h4">Notice a Problem?</h4>
-                            <p>
-                                Email me at jake906@charter.net and I will maybe possibly try to fix it
-                            </p>
-
-                            <button className="modal-cancel help-modal-close" onClick={() => showHelpModal(false)}>Close</button>
-                        </div>
-                    </div>
-                        
-                    }
                 </div>
+
+                {/* MODALS */}
+                {showModal &&
+                    <div className="modalWrapper">
+                        <BookingModal 
+                            expectedPeople={expectedPeople}
+                            simpleDate={simpleDate}
+                            setExpectedPeople={setExpectedPeople}
+                            checkPeopleInput={checkPeopleInput}
+                            handleSubmit={handleSubmit}
+                            setShowModal={setShowModal}
+                        />
+                    </div>
+                }
+                
+                {showCancelModal &&
+                    <div className="modalWrapper">
+                        <CancelModal 
+                            simpleDate={simpleDate} 
+                            expectedPeople={expectedPeople} 
+                            setExpectedPeople={setExpectedPeople}
+                            checkPeopleInput={checkPeopleInput}
+                            updatePeople={updatePeople}
+                            setShowCancelModal={setShowCancelModal}
+                            cancelBooking={cancelBooking}
+                        />
+                    </div>
+                }
+
+                {helpModal &&
+                    <HelpModal showHelpModal={showHelpModal}/>
+                }
+                    
                 <div className="map-div">
                     <div className="gmap_canvas">
                         <iframe 
@@ -394,7 +434,7 @@ const Home = (props) => {
                             width="600" 
                             height="500" 
                             id="gmap_canvas" 
-                            src="https://maps.google.com/maps?q=29035%20Pardun%20Road%20Danbury%20Wi&t=k&z=13&ie=UTF8&iwloc=&output=embed" 
+                            src="https://www.google.com/maps/embed/v1/place?key=AIzaSyBEWYCWX0NQa09g3-ccxoE72Aqg3ADJYe0&q=29035%20Pardun%20Road%20Danbury%20Wi&maptype=satellite"
                             frameBorder="0" 
                             scrolling="no" 
                             marginHeight="0" 
