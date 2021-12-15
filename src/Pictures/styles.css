@@ -41,13 +41,15 @@
     height: 400px;
     width: 400px;
     margin-bottom: 1rem;
-    border: 3px solid rgb(2, 32, 167);
+    border: 2px solid rgb(139, 139, 139);
     border-radius: 5px;
+    transition: transform .5s, box-shadow .5s ease-in-out;
 }
 
 .picture:hover {
     cursor: pointer;
-    animation: bounce 1s infinite alternate;
+    box-shadow: 0px 3px 8px 5px rgba(0,0,0,.5);
+    transform: translateY(-5px);
 }
 
 .inputfile {

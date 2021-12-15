@@ -1,29 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
-import { Calendar } from '@fullcalendar/core';
 import interactionPlugin from '@fullcalendar/interaction';
 import googleCalendarPlugin from '@fullcalendar/google-calendar';
-import styles from './styles.css';
 import Comments from "../Comments/Comments";
+import ExpenseTracking from '../ExpenseTracking/ExpenseTracking';
 import Pictures from "../Pictures/Pictures";
 import CancelModal from "../CancelModal/CancelModal";
 import HelpModal from "../HelpModal/HelpModal";
 import BookingModal from "../BookingModal/BookingModal";
 import bookingDemo from "./booking-demo.mp4";
+import { useAuth } from '../contexts/AuthContext';
+import { useHistory } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
+import styles from "./styles.css"
 
 const firebase = require('firebase');
 
-// firebase.auth().onAuthStateChanged(function(user) {
-//     this.setState({ user: user });
-// });
-
 const Home = (props) => {
 
-    let calendarRef = React.createRef()
+    const { logout, currentUser } = useAuth();
+    const history = useHistory();
 
-    const position = props.location.state.name.indexOf("@")
-    let username = props.location.state.name.substring(0, position);
+    let calendarRef = React.createRef()
+    
+    const position = currentUser.email.indexOf("@")
+    let username = currentUser.email.substring(0, position);
     username = username.charAt(0).toUpperCase() + username.slice(1)
 
     const [simpleDate, setSimpleDate] = useState(null)
@@ -37,6 +39,7 @@ const Home = (props) => {
     const [sawTip, setSawTip] = useState(false);
     const [tipId, setTipId] = useState();
 
+
     useEffect(() => {
 
         // fetch tips
@@ -46,19 +49,15 @@ const Home = (props) => {
             .onSnapshot(serverUpdate => {
                 let tips = serverUpdate.docs.map(_doc => {
                     let data = _doc.data();
-                    // data['user'] = _doc.user;
-                    // data['hasSeen'] = _doc.tipSeen;
+
                     data['id'] = _doc.id;
                     return data;
-                    // return { user: _doc.data.user, hasSeen: _doc.data.tipSeen };
                 })
                 
-                tips = tips.filter(tip => tip.user == username);
+                tips = tips.filter(tip => tip.user === username);
                 
                 setSawTip(tips[0].tipSeen);
                 setTipId(tips[0].id);
-
-                console.log("TIPS: " + JSON.stringify(tips, null, " "));
             })
         
         //fetch reservations
@@ -107,7 +106,7 @@ const Home = (props) => {
 
                     return {comment: image.comment, date: dateString, id: image.id, imageURL: image.imageURL, owner: image.owner, filename: image.filename}
                 })
-                console.log("SETTING IMAGES...");
+
                 setImageData(fetchedImages)
             })
     }, [])    
@@ -142,6 +141,36 @@ const Home = (props) => {
     }
     */
 
+    const bookToast = () => toast("Booked Successfully!", {
+        duration: 4000,
+        position: 'bottom-center',
+        icon: '👍'
+    });
+
+    const updateBookToast = () => toast("Updated Successfully!", {
+        duration: 4000,
+        position: 'bottom-center',
+        icon: '👍'
+    });
+
+    const cancelBookToast = () => toast("Cancelled Successfully!", {
+        duration: 4000,
+        position: 'bottom-center',
+        icon: '👍'
+    });
+
+    const cancelAllBookToast = () => toast("Cancelled All Bookings Successfully!", {
+        duration: 4000,
+        position: 'bottom-center',
+        icon: '👍'
+    });
+
+    const deleteExpenseToast = () => toast("Expense Deleted!", {
+        duration: 4000,
+        position: 'top-center',
+        icon: '👍'
+    });
+
     const toggleModalAnimation = () =>
     {
         const modals = Array.from(document.getElementsByClassName('modalWrapper'));
@@ -152,15 +181,9 @@ const Home = (props) => {
         });
     }
 
-    const logout = (e) => {
-        e.preventDefault();
-
-        firebase
-            .auth()
-            .signOut().then(() => {
-                console.log("logged user out");
-                props.history.push('/login');
-            })
+    async function handleLogout() {
+        await logout();
+        history.push('/login');
     }
 
     const handleSubmit = () => {
@@ -179,6 +202,7 @@ const Home = (props) => {
                 })
         })
         
+        bookToast();
         setExpectedPeople(null)
     }
 
@@ -192,6 +216,7 @@ const Home = (props) => {
                 .delete();
         })
        
+        cancelBookToast();
     }
 
     const updatePeople = () => {
@@ -207,6 +232,7 @@ const Home = (props) => {
                 })
         })
 
+        updateBookToast();
         setExpectedPeople(null)
     }
 
@@ -226,6 +252,8 @@ const Home = (props) => {
                 .doc(event.id)
                 .delete();
         })
+
+        cancelAllBookToast();
     }
 
     const getDateRange = (start, end) => {
@@ -280,7 +308,7 @@ const Home = (props) => {
                     <button className="help-btn" onClick={() => { showHelpModal(!helpModal); toggleModalAnimation(); } }>
                         Help
                     </button>
-                    <button className="logout-btn" onClick={(e) => logout(e)}>
+                    <button className="logout-btn" onClick={(e) => handleLogout(e)}>
                         Logout &nbsp; <i className="fas fa-sign-out-alt"></i>
                     </button>
                 </div>
@@ -296,6 +324,7 @@ const Home = (props) => {
                 </a>
             </div>
             <div className="home-body">
+                <Toaster />
                 <div className="welcome-div">
                     <h1>Welcome, you are signed in as {username}</h1>
                     <button className="clear-all-button" onClick={() => cancelAllInMonth()}>Clear All Reservations in Month</button>
@@ -454,6 +483,11 @@ const Home = (props) => {
                 <Pictures imageData={imageData} username={username}>
 
                 </Pictures>
+            </div>
+            <div className="expenses-div-container">
+                <ExpenseTracking username={username} deleteExpenseToast={deleteExpenseToast}>
+
+                </ExpenseTracking>
             </div>
             <div className="footer">
                 Notice a Problem? Email me &nbsp; -> &nbsp;&nbsp; <a style={{textDestylecoration: "none"}} href="mailto:jake906@charter.net">jake906@charter.net</a>

@@ -5,9 +5,6 @@ const BookingModal = (props) => {
 return (
     <div className="modal">
         <div className="modal-header-div">
-            {/* <h3 className="modal-top-header">Selected Date: {props.simpleDate}</h3>
-            <h3>Expected Total People?</h3> */}
-            {console.log("SIMPLE DATE: " + props.simpleDate)}
             <h3 className="modal-top-header">Selected Date(s)</h3>
             <h3 style={{ textAlign: "center", margin: '0'}}>{props.simpleDate}</h3>
             

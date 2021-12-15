@@ -1,0 +1,4 @@
+add toasts
+add expenses tracking
+cleanup warnings
+fix auth issues
