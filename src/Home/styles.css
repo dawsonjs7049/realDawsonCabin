@@ -365,6 +365,11 @@
     flex-wrap: nowrap;
     justify-content: center;
     align-items: center;
+    background-color: ghostwhite;
+    padding: 2rem 0 2rem 0;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 .expense-inputs-div-containers {
@@ -376,14 +381,31 @@
     width: 25vw;
     max-width: 400px;
     padding: 0 10px;
-    /* margin: 0 1rem 0 1rem; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.dd-wrapper {
+    height: 34px !important;
+    width: 10rem;
+    border-radius: 5px;
+    font-size: 1em;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
+}
+
+.dd-header {
+    max-height: 34px !important;
+}
+
+.dd-list-item {
+    font-size: 1em !important;
 }
 
 .expense-input-type {
     width: 10rem;
-    height: 36px;
+    height: 34px;
     border-radius: 5px;
-    /* margin: 0 1rem 0 1rem; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
 }
 
@@ -391,7 +413,7 @@
     width: 10rem;
     height: 2rem;
     padding: 0 10px;
-    /* margin: 0 1rem 0 1rem; */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
 }
 
@@ -404,6 +426,8 @@
     border-radius: 5px;
     margin: 0 1rem 0 1rem;
     cursor: pointer;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 .expense-add-btn:hover {
@@ -462,6 +486,8 @@
     border-radius: 5px;
     cursor: pointer;
     transition: all .5s;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+
 }
 
 .expense-delete-btn:hover {
@@ -489,5 +515,6 @@
 
 .text-light {
     color: white;
+    font-size: 1.5em;
 }
 

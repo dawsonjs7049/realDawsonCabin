@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react"
+import { Dropdown } from 'reactjs-dropdown-component';
+
 // import styles from "./styles.css";
 
 const firebase = require('firebase');
@@ -6,11 +8,27 @@ const firebase = require('firebase');
 export default function ExpenseTracking( { username, deleteExpenseToast}) {
 
     const descriptionRef = useRef();
-    const typeRef = useRef();
     const priceRef = useRef();
 
     const [allExpenses, setAllExpenses] = useState();
     const [runningTotal, setRunningTotal] = useState();
+    const [type, setType] = useState('Expense');
+
+    const types = [
+        {
+            label: 'Expense',
+            value: 'Expense',
+        },
+        {
+            label: 'Payment',
+            value: 'Payment',
+        }
+    ];
+
+    const handleSelectChange = (item, name) => {
+        console.log("ITEM: " + JSON.stringify(item) + " - NAME: " + name);
+        setType(item.label);
+    }
 
     useEffect(() => {
         firebase
@@ -41,28 +59,27 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
 
     const handleAddExpense = () => {
 
-        if(username == 'kevin' || username == 'Jake906')
+        if(username == 'Kevin' || username == 'Jake906')
         {
             firebase
                 .firestore()
                 .collection('Expenses')
                 .add({
                     description: descriptionRef.current.value,
-                    type: typeRef.current.value,
+                    type: type,
                     date: new Date().toLocaleDateString("en-US"),
-                    amount: (typeRef.current.value == 'Expense' ? parseFloat(priceRef.current.value).toFixed(2) : "-" + parseFloat(priceRef.current.value).toFixed(2)),
+                    amount: (type == 'Expense' ? parseFloat(priceRef.current.value).toFixed(2) : "-" + parseFloat(priceRef.current.value).toFixed(2)),
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
 
             descriptionRef.current.value = '';
-            typeRef.current.value = 'Expense';
             priceRef.current.value = '';
         }
     }
 
     const handleDeleteExpense = (expenseId) => {
         
-        if(username == 'kevin' || username == 'Jake906')
+        if(username == 'Kevin' || username == 'Jake906')
         {
             firebase
                 .firestore()
@@ -80,20 +97,23 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
             <h2 className="text-light">Expense Tracking</h2>
             <div className="expense-inputs-container">
                 <div className="expense-inputs-div-containers">
-                    <div className="text-light"><strong>Description</strong></div>
+                    <div className=""><strong>Description</strong></div>
                     <input type="text" ref={descriptionRef} className="expense-input-description"></input>
                 </div>
                 
                 <div className="expense-inputs-div-containers">
-                    <div className="text-light"><strong>Type</strong></div>
-                    <select ref={typeRef} className="expense-input-type">
-                        <option>Expense</option>
-                        <option>Payment</option>
-                    </select>
+                    <div className=""><strong>Type</strong></div>
+                    <Dropdown
+                        select={{value: 'Expense'}}
+                        name="expenseType"
+                        title="Select"
+                        list={types}
+                        onChange={(item, name) => handleSelectChange(item, name)}
+                    />
                 </div>
                 
                 <div className="expense-inputs-div-containers">
-                    <div className="text-light"><strong>Amount</strong></div>
+                    <div className=""><strong>Amount</strong></div>
                     <input type="number" className="expense-input-price" ref={priceRef}></input>
                 </div>
                 
