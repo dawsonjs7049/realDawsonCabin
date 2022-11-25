@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect, useRef } from "react"
-import { Dropdown } from 'reactjs-dropdown-component';
+import Select from 'react-select';
+
 
 // import styles from "./styles.css";
 
@@ -10,9 +12,19 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
     const descriptionRef = useRef();
     const priceRef = useRef();
 
-    const [allExpenses, setAllExpenses] = useState();
+    const ONE_MONTH = 1;
+    const SIX_MONTH = 6;
+    const TWELVE_MONTH = 12;
+    const ALL = -1;
+    const CUSTOM = -2;
+
+    const [startingExpenses, setStartingExpenses] = useState();
+    const [displayedExpenses, setDisplayedExpenses] = useState([]);
     const [runningTotal, setRunningTotal] = useState();
+    const [filteredTotal, setFilteredTotal] = useState(0);
     const [type, setType] = useState('Expense');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
 
     const types = [
         {
@@ -25,10 +37,24 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
         }
     ];
 
-    const handleSelectChange = (item, name) => {
-        console.log("ITEM: " + JSON.stringify(item) + " - NAME: " + name);
-        setType(item.label);
-    }
+    const filters = [
+        {
+            label: '1 Month',
+            value: ONE_MONTH,
+        },
+        {
+            label: '6 Months',
+            value: SIX_MONTH,
+        },
+        {
+            label: '12 Months',
+            value: TWELVE_MONTH,
+        },
+        {
+            label: 'All Time',
+            value: ALL,
+        }
+    ];
 
     useEffect(() => {
         firebase
@@ -37,25 +63,67 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
             // .limit(10)
             .orderBy("timestamp")
             .onSnapshot(serverUpdate => {
-                const expenses = serverUpdate.docs.map(_doc => {   
+                const allExpenses = serverUpdate.docs.map(_doc => {   
                     const data = _doc.data();
                     data['id'] = _doc.id;
                     return data;
                 });
 
-            //reverse makes it so the most recent comments are listed first
-            setAllExpenses(expenses)
+            setStartingExpenses(allExpenses);
 
             let runTotal = 0;
-            for(var i = 0; i < expenses.length; i++)
+            for(var i = 0; i < allExpenses.length; i++)
             {
-                runTotal += parseFloat(expenses[i].amount);
+                runTotal += parseFloat(allExpenses[i].amount);
             }
 
             setRunningTotal(runTotal);
-
+            
+            handleSetDisplayedExpenses(SIX_MONTH, allExpenses, null, null);
         })
     }, [])  
+
+    const handleSetDisplayedExpenses = (timeframe, startingArr, start, end) => {
+        let filterArr = (startingArr !== null ? startingArr : startingExpenses);
+
+        let newArr = [];
+        const timestamp = getTimestamp(timeframe);
+
+        switch(timeframe) {
+            case ONE_MONTH:
+            case SIX_MONTH:
+            case TWELVE_MONTH:
+                filterArr.forEach((expense) => {
+                    let myTimestamp = (expense.timestamp !== null ? expense.timestamp.seconds : new Date().getTime() / 1000);
+                    if(myTimestamp > timestamp)
+                    {
+                        newArr.push(expense);
+                    }
+                });
+                break;
+
+            case ALL:
+                newArr = filterArr;
+                break;
+
+            default:
+                filterArr.forEach((expense) => {
+                    if(expense.timestamp.seconds > start && expense.timestamp.seconds < end)
+                    {
+                        newArr.push(expense);
+                    }
+                });
+        };
+
+        let filteredTotal = 0;
+        newArr.forEach((expense) => {
+            filteredTotal += parseFloat(expense.amount);
+        })
+
+        setFilteredTotal(filteredTotal);
+        setDisplayedExpenses(newArr);
+        
+    }
 
     const handleAddExpense = () => {
 
@@ -90,6 +158,49 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
             deleteExpenseToast();
         }
     }
+    
+    const handleSelectChange = (item) => {
+        setType(item.label)
+    }
+
+    const handleFilterChange = (item) => {
+        handleSetDisplayedExpenses(item.value, null, null, null);
+
+        setStartDate('');
+        setEndDate('');
+    }
+
+    const handleStartDate = (e) => {
+        let start = e.target.value;
+        let end = '';
+
+        start = new Date(start).getTime() / 1000;
+        end = (endDate === '' ? new Date().getTime() : new Date(endDate).getTime()) / 1000;
+
+        setStartDate(e.target.value);
+
+        handleSetDisplayedExpenses(CUSTOM, null, start, end);
+
+    }
+
+    const handleEndDate = (e) => {
+        let end = e.target.value;
+        let start = '';
+
+        end = new Date(end).getTime() / 1000;
+        start = (startDate === '' ? new Date('1970-01-01').getTime() : new Date(startDate).getTime()) / 1000;
+
+        setEndDate(e.target.value);
+
+        handleSetDisplayedExpenses(CUSTOM, null, start, end);
+    }
+
+    const getTimestamp = (months) => {
+        const date = new Date();
+        date.setMonth(date.getMonth() - months);
+
+        return (date.getTime() / 1000);
+      }
 
 
     return (
@@ -103,12 +214,11 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
                 
                 <div className="expense-inputs-div-containers">
                     <div className=""><strong>Type</strong></div>
-                    <Dropdown
-                        select={{value: 'Expense'}}
-                        name="expenseType"
-                        title="Select"
-                        list={types}
-                        onChange={(item, name) => handleSelectChange(item, name)}
+                    <Select
+                        defaultValue={{ label: "Expense", value: "Expense" }}
+                        onChange={(item) => handleSelectChange(item)}
+                        options={types}
+                        menuPlacement="bottom"
                     />
                 </div>
                 
@@ -131,29 +241,56 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
                          <strong>Amount</strong> 
                     </div>
                 </div>
-                <div style={{ width: '100%', height: '2px', backgroundColor: 'white' }}></div>
+                <div style={{ width: '100%', height: '2px', backgroundColor: 'white', maxHeight: '300px', overflowY: 'auto' }}></div>
+                <div style={{ maxHeight: '800px', overflowY: 'auto'}}>
                 {
-                    allExpenses &&
+                    displayedExpenses.length > 0 &&
 
-                    allExpenses.map(expense => {
+                    displayedExpenses.map(expense => {
                         return (
                             <div key={expense.id} className="expense-items-container">
                                 <div className="expense-item">{expense.description}</div>
                                 <div className="expense-item">{expense.date}</div>
                                 <div className="expense-item" style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <div>${expense.amount}</div>
+                                    <div>{(expense.amount < 0 ? '-' : '')}${Math.abs(expense.amount)}</div>
                                     <div><button className="expense-delete-btn" onClick={() => handleDeleteExpense(expense.id)}><i className="far fa-trash-alt"></i></button></div>
                                 </div>
                             </div>
                         )
-            
                     })
                 }
 
+                </div>
             </div>
-            <div className="running-total-container">
-                <div className="running-total">
-                    Running Total: ${parseFloat(runningTotal).toFixed(2)}
+            <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between'}}>
+                <div className="expense-totals-container">
+                    <div className="running-total-container" style={{marginRight: '1 rem'}}>
+                        Running Total: {(runningTotal < 0 ? '-' : '')}${Math.abs(parseFloat(runningTotal).toFixed(2))}
+                    </div>
+                    <div className="running-total-container">
+                        Filtered Total: {(filteredTotal < 0 ? '-' : '')}${Math.abs(parseFloat(filteredTotal).toFixed(2))}
+                    </div>
+                </div>
+            
+                <div className="expense-filter-container">
+                    <div className="expense-filter-select">
+                        <p style={{ marginTop: 0, marginBottom: '5px', color: 'white'}}>Filter</p>
+                        <Select
+                            defaultValue="6 Month"
+                            onChange={(item) => handleFilterChange(item)}
+                            options={filters}
+                            menuPlacement="top"
+                        />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column'}}>
+                        <p style={{ marginTop: 0, marginBottom: '5px', color: 'white'}}>Custom Start</p>
+                        <input type="date" value={startDate} onChange={(e) => handleStartDate(e)} className="filter-item"/>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'column'}}>
+                        <p style={{ marginTop: 0, marginBottom: '5px', color: 'white'}}>Custom End</p>
+                        <input type="date" value={endDate} onChange={(e) => handleEndDate(e)} className="filter-item"/>
+                    </div>
                 </div>
             </div>
         </div>

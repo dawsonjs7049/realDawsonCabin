@@ -348,6 +348,56 @@
     background-color: rgb(107, 169, 250);
 }
 
+.expense-totals-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: flex-end;
+    gap: 10px;
+    width: 450px;
+}
+
+.expense-filter-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    gap: 10px;
+    width: calc(100% - 450px);
+    align-items: center;
+}
+
+.running-total-container {
+    width: 13rem;
+    height: 3rem;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: ghostwhite;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: center;
+}
+
+.filter-item {
+    height: 41px;
+    width: 10rem;
+    font-size: 17px;
+    padding: 0 5px;
+}
+
+.expense-filter-select {
+   
+    display: flex;
+    flex-direction: column;
+}
+
+.css-b62m3t-container {
+    width: 10rem;
+}
+
 .expense-container {
     padding-top: 3rem;
     max-width: 1400px;
@@ -440,7 +490,7 @@
     flex-wrap: wrap;
     width: 100%;
     margin-top: 3rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 .expense-header {
@@ -497,20 +547,6 @@
 .expense-items-container:hover {
     margin: 1rem 0 1rem 0;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.486), 0 6px 20px 0 rgba(0, 0, 0, 0.377);
-}
-
-.running-total-container {
-    width: 15rem;
-    height: 3rem;
-    margin: auto;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-    background-color: ghostwhite;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
 }
 
 .text-light {
