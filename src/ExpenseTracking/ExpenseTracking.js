@@ -276,7 +276,7 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
                     <div className="expense-filter-select">
                         <p style={{ marginTop: 0, marginBottom: '5px', color: 'white'}}>Filter</p>
                         <Select
-                            defaultValue="6 Month"
+                            defaultValue={{ label: "6 Months", value: SIX_MONTH }}
                             onChange={(item) => handleFilterChange(item)}
                             options={filters}
                             menuPlacement="top"
