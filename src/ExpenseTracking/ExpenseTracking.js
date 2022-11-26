@@ -22,17 +22,17 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
     const [displayedExpenses, setDisplayedExpenses] = useState([]);
     const [runningTotal, setRunningTotal] = useState();
     const [filteredTotal, setFilteredTotal] = useState(0);
-    const [type, setType] = useState('Expense');
+    const [type, setType] = useState('Deposit (+)');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
 
     const types = [
         {
-            label: 'Expense',
-            value: 'Expense',
+            label: 'Deposit (+)',
+            value: 'Deposit',
         },
         {
-            label: 'Payment',
+            label: 'Payment (-)',
             value: 'Payment',
         }
     ];
@@ -129,6 +129,7 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
 
         if(username == 'Kevin' || username == 'Jake906')
         {
+            console.log("TYPE: " + type);
             firebase
                 .firestore()
                 .collection('Expenses')
@@ -136,7 +137,7 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
                     description: descriptionRef.current.value,
                     type: type,
                     date: new Date().toLocaleDateString("en-US"),
-                    amount: (type == 'Expense' ? parseFloat(priceRef.current.value).toFixed(2) : "-" + parseFloat(priceRef.current.value).toFixed(2)),
+                    amount: (type == 'Deposit (+)' ? parseFloat(priceRef.current.value).toFixed(2) : "-" + parseFloat(priceRef.current.value).toFixed(2)),
                     timestamp: firebase.firestore.FieldValue.serverTimestamp()
                 })
 
@@ -215,7 +216,7 @@ export default function ExpenseTracking( { username, deleteExpenseToast}) {
                 <div className="expense-inputs-div-containers">
                     <div className=""><strong>Type</strong></div>
                     <Select
-                        defaultValue={{ label: "Expense", value: "Expense" }}
+                        defaultValue={{ label: "Deposit (+)", value: "Deposit" }}
                         onChange={(item) => handleSelectChange(item)}
                         options={types}
                         menuPlacement="bottom"
